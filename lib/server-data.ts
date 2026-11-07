@@ -1,17 +1,17 @@
 import { neon } from '@neondatabase/serverless';
-import { MODEL,validatePayload } from './model';
+import { MODEL,validatePayload,InputError } from './model';
 import type { Resource } from './constants';
 function db(){if(!process.env.DATABASE_URL)throw Error('DATABASE_URL missing');return neon(process.env.DATABASE_URL);}
 export async function listData(resource:Resource){ const {table,sort}=MODEL[resource];return await db().query(`SELECT * FROM ${table} ORDER BY ${sort} LIMIT 500`,[]); }
 export async function createData(resource:Resource,input:unknown,email:string){
  const data=validatePayload(resource,input,true),keys=Object.keys(data),table=MODEL[resource].table;
- if(resource==='applications' && ['submitted','won'].includes(String(data.status)))throw Error('제출 또는 투자확정 증빙 검증을 위해 계획 상태로 생성한 뒤 전환하세요');
+ if(resource==='applications' && ['submitted','won'].includes(String(data.status)))throw new InputError('제출 또는 투자확정 증빙 검증을 위해 계획 상태로 생성한 뒤 전환하세요');
  const binds=keys.map((_,i)=>`$${i+1}`);
  const rows=await db().query(`INSERT INTO ${table} (${keys.join(',')}) VALUES(${binds.join(',')}) RETURNING *`,keys.map(k=>data[k]));
  await audit(resource,rows[0].id,'create',email,{keys});return rows[0];
 }
 export async function updateData(resource:Resource,id:string,input:unknown,email:string){
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw Error('Invalid record ID');
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw new InputError('Invalid record ID');
  const data=validatePayload(resource,input,false),keys=Object.keys(data),table=MODEL[resource].table;
  if(resource==='projects' && data.public_enabled===true){
    let summary=data.public_summary;
@@ -21,7 +21,7 @@ export async function updateData(resource:Resource,id:string,input:unknown,email
  if(resource==='applications' && ['submitted','won'].includes(String(data.status))){
    let evidence=data.evidence_url;
    if(!evidence){const old=await db().query('SELECT evidence_url FROM ir_applications WHERE id=$1',[id]);evidence=old[0]?.evidence_url;}
-   if(!evidence || !/^https:\/\//i.test(String(evidence))) throw Error('제출 완료 및 투자 확정 상태에는 실제 증빙 HTTPS URL이 필요합니다');
+   if(!evidence || !/^https:\/\//i.test(String(evidence))) throw new InputError('제출 완료 및 투자 확정 상태에는 실제 증빙 HTTPS URL이 필요합니다');
  }
  const pairs=keys.map((k,i)=>`${k}=$${i+1}`);
  if(resource==='applications' && data.status==='submitted')pairs.push('submitted_at=COALESCE(submitted_at,now())');
