@@ -1,0 +1,31 @@
+name: Verify investor hub
+on:
+  push:
+    branches: [main, "chatgpt/**"]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Build-only dummy config; never enables production DB or real login.
+      DATABASE_URL: postgresql://ci:ci@localhost/neondb?sslmode=require
+      NEON_AUTH_BASE_URL: https://example.invalid
+      NEON_AUTH_COOKIE_SECRET: local-ci-placeholder-not-production-32chars
+      ADMIN_EMAILS: ci@example.invalid
+      NEXT_PUBLIC_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies (generate lockfile before production release)
+        run: npm install --no-audit --no-fund
+      - name: Unit and source policy tests
+        run: npm test
+      - name: TypeScript type check
+        run: npm run typecheck
+      - name: Next.js build
+        run: npm run build
