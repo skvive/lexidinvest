@@ -1,6 +1,6 @@
 # LEXID INVEST — Fundraising Operations Web App
 
-Public-safe Next.js application source (v0.2.1). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
+Public-safe Next.js application source (v0.2.2). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
 
 ## Verified release status — 2026-11-07
 
