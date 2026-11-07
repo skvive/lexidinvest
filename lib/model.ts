@@ -42,7 +42,7 @@ export function validatePayload(resource:Resource,data:unknown,creating:boolean)
    let cleaned=value;
    if(typeof cleaned==='string' && ['name','firm','sector','title','email','website_url','repo_url','deck_url','source_url','target_url','evidence_url'].includes(key)) cleaned=cleaned.trim();
    if(key==='email' && typeof cleaned==='string' && cleaned) {
-     if(cleaned.length>254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(cleaned)) throw new InputError('유효하지 않은 이메일 형식');
+     if(cleaned.length>254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned)) throw new InputError('유효하지 않은 이메일 형식');
      cleaned=cleaned.toLowerCase();
    }
    const nonBlank:Partial<Record<Resource,string[]>>={
