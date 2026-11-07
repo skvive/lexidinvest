@@ -48,3 +48,18 @@ test('no unverified default publication',()=>{
  assert.match(migration,/public_enabled BOOLEAN NOT NULL DEFAULT false/i);
  assert.match(migration,/confidential BOOLEAN NOT NULL DEFAULT true/i);
 });
+
+test('KST application deadline stays open through the local end of day',()=>{
+ const {deadlineTone}=require(path.join(tmp,'constants.js'));
+ assert.equal(deadlineTone('2026-11-07',Date.parse('2026-11-07T15:00:00+09:00')),'urgent');
+ assert.equal(deadlineTone('2026-11-07',Date.parse('2026-11-07T23:59:59+09:00')),'urgent');
+ assert.equal(deadlineTone('2026-11-07',Date.parse('2026-11-08T00:00:00+09:00')),'past');
+ assert.equal(deadlineTone('2026-11-16',Date.parse('2026-11-07T15:00:00+09:00')),'upcoming');
+ assert.equal(deadlineTone('',Date.parse('2026-11-07T15:00:00+09:00')),'neutral');
+});
+test('overview only shows upcoming deadlines while calendar retains deadline history',()=>{
+ const workspace=fs.readFileSync(new URL('../app/dashboard/workspace.tsx',import.meta.url),'utf8');
+ assert.match(workspace,/nextDeadlines=useMemo\(\(\)=>programUpcoming\.filter\(x=>!isPast\(x\.deadline\)\)/);
+ assert.match(workspace,/nextDeadlines\.slice\(0,5\)/);
+ assert.match(workspace,/programUpcoming\.map\(p=>/);
+});

@@ -7,4 +7,14 @@ export const PRIORITIES = ['P0', 'P1', 'P2', 'P3'] as const;
 export const RISK_STATUS = ['open', 'in_review', 'resolved'] as const;
 export function isResource(value: unknown): value is Resource { return typeof value === 'string' && (RESOURCE_NAMES as readonly string[]).includes(value); }
 export function displayDate(value: string | null | undefined) { if (!value) return '—'; const date = new Date(value); return Number.isNaN(+date) ? '—' : date.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Seoul'}); }
-export function deadlineTone(value: string | null | undefined) { if (!value) return 'neutral'; const date = new Date(value); if (date.getTime() < Date.now()) return 'past'; if (date.getTime() - Date.now() < 7*86400e3) return 'urgent'; return 'upcoming'; }
+/** Date-only application deadlines expire at 23:59:59.999 Asia/Seoul, not UTC midnight. */
+export function deadlineTone(value: string | null | undefined, now: number = Date.now()) {
+ if (!value) return 'neutral';
+ const dateOnly = value.slice(0,10);
+ if (!/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return 'neutral';
+ const deadlineEnd = new Date(`${dateOnly}T23:59:59.999+09:00`).getTime();
+ if (Number.isNaN(deadlineEnd)) return 'neutral';
+ if (deadlineEnd < now) return 'past';
+ if (deadlineEnd - now < 7*86400e3) return 'urgent';
+ return 'upcoming';
+}

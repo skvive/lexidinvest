@@ -45,3 +45,10 @@ This public-safe repository intentionally omits the private IR seed SQL and inte
 ## Administrator sign-in
 
 The admin sign-in page intentionally provides **Google login only**; Neon Auth disables email/password sign-in and self-signup. The server verifies the Google account's email and requires an exact `ADMIN_EMAILS` allowlist match. Callback/sign-out remain handled by Neon Auth. Production release still requires a real Google OAuth login E2E check before attaching the public custom domain.
+
+## Stability update v0.2.4 (2026-11-07)
+
+- Health endpoint now validates a real server-side DB round-trip (SELECT 1) before reporting configured status; errors return 503 without leaking SQL details.
+- Date-only accelerator deadlines use the end of the local date (23:59:59.999 Asia/Seoul), eliminating premature "expired" labels.
+- The dashboard highlights only future deadlines; its calendar retains expired deadlines for recordkeeping.
+- Google-only login and admin email verification remain mandatory.
