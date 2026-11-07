@@ -1,6 +1,6 @@
 # LEXID INVEST — Fundraising Operations Web App
 
-Public-safe Next.js application source (v0.2.2). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
+Public-safe Next.js application source (v0.2.3). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
 
 ## Verified release status — 2026-11-07
 
@@ -41,3 +41,7 @@ npm run dev
 - Avoid automatically deploying to production until the actual `npm run build`, OAuth flows, access controls, and protected API E2E tests have passed.
 
 This public-safe repository intentionally omits the private IR seed SQL and internal audit/checklist materials. Existing records belong in your secure Neon database, not a GitHub source tree.
+
+## Administrator sign-in
+
+The admin sign-in page intentionally provides **Google login only**; Neon Auth disables email/password sign-in and self-signup. The server verifies the Google account's email and requires an exact `ADMIN_EMAILS` allowlist match. Callback/sign-out remain handled by Neon Auth. Production release still requires a real Google OAuth login E2E check before attaching the public custom domain.

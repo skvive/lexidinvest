@@ -51,3 +51,15 @@
 .drawer-brand-image img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-width:1200px){.asset-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.asset-library-grid{grid-template-columns:1fr}.asset-library-details{padding:15px}.asset-library-footnote{align-items:flex-start}}
+
+/* Google-only admin access: no disabled credential forms */
+.auth-card.auth-google-only{width:min(440px,100%);min-width:0;padding:38px}
+.oauth-kicker{font:800 10px/1.4 Inter,sans-serif;letter-spacing:2px;color:#6b8b44;margin:0 0 17px}
+.oauth-title{font:750 clamp(26px,4vw,33px)/1.2 Manrope,Inter,sans-serif;letter-spacing:-1.6px;color:#203028;margin:0 0 14px}
+.oauth-copy{color:#69796d;font-size:13px;line-height:1.9;margin:0 0 27px}
+.oauth-google-button{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:54px;padding:13px 20px;border-radius:10px;background:#172b22;color:#fff;font-weight:750;font-size:14px;border:1px solid #172b22;transition:background .18s ease}
+.oauth-google-button:hover:not(:disabled){background:#315235}
+.oauth-google-button:disabled{opacity:.65;cursor:wait}
+.oauth-google-mark{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:white;color:#4285f4;font:900 16px Inter,sans-serif}
+.oauth-error{color:#b12329;font-size:12px;line-height:1.65;margin:12px 0 0}
+.oauth-hint{font-size:11px;line-height:1.7;color:#91a099;margin:18px 0 0;text-align:center}
