@@ -4,7 +4,7 @@ import fs from 'node:fs';
 const read=(s)=>fs.readFileSync(new URL('../'+s,import.meta.url),'utf8');
 test('health endpoint does not report app ready before configuration',()=>{
  const h=read('app/api/health/route.ts');
- assert.match(h,/version: '0\.2\.1'/);
+ assert.ok(h.includes("version: '"+JSON.parse(read('package.json')).version+"'"));
  assert.match(h,/not_configured/);
  assert.match(h,/503/);
  assert.doesNotMatch(h,/DATABASE_URL\s*:/);
