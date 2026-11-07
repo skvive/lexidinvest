@@ -63,3 +63,32 @@ test('overview only shows upcoming deadlines while calendar retains deadline his
  assert.match(workspace,/nextDeadlines\.slice\(0,5\)/);
  assert.match(workspace,/programUpcoming\.map\(p=>/);
 });
+
+test('investor emails are normalized and malformed addresses are rejected',()=>{
+ assert.equal(validatePayload('investors',{name:'  Jane  ',email:'  JANE@EXAMPLE.COM  '},true).email,'jane@example.com');
+ assert.throws(()=>validatePayload('investors',{name:'Jane',email:'not-an-email'},true),/이메일/);
+ assert.throws(()=>validatePayload('investors',{name:'Jane',email:'test@some domain.com'},true),/이메일/);
+});
+test('blank required names are blocked, including edits',()=>{
+ assert.throws(()=>validatePayload('investors',{name:'   '},true),/필수값/);
+ assert.throws(()=>validatePayload('projects',{name:'   '},false),/필수값/);
+ assert.throws(()=>validatePayload('documents',{title:'  '},false),/필수값/);
+});
+test('invalid calendar dates are rejected before database access',()=>{
+ assert.throws(()=>validatePayload('programs',{deadline:'2026-02-30'},false),/날짜/);
+ assert.throws(()=>validatePayload('applications',{follow_up_date:'2026-13-03'},false),/날짜/);
+ assert.equal(validatePayload('programs',{deadline:'2028-02-29'},false).deadline,'2028-02-29');
+});
+test('database errors are mapped without disclosing PostgreSQL messages',()=>{
+ const source=fs.readFileSync(new URL('../lib/requests.ts',import.meta.url),'utf8');
+ assert.match(source,/code==='23505'/);
+ assert.match(source,/status:409/);
+ assert.match(source,/code==='23503'/);
+ assert.match(source,/status:422/);
+ assert.doesNotMatch(source,/error:safe\?msg/);
+});
+test('expired admin sessions clear confidential dashboard memory',()=>{
+ const source=fs.readFileSync(new URL('../app/dashboard/workspace.tsx',import.meta.url),'utf8');
+ assert.ok(source.split('if(res.status===401){setData(EMPTY);').length>=3);
+ assert.match(source,/location\.assign\('\/auth\/sign-in'\)/);
+});

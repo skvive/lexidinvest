@@ -1,6 +1,6 @@
 # LEXID INVEST — Fundraising Operations Web App
 
-Public-safe Next.js application source (v0.2.3). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
+Public-safe Next.js application source (v0.2.5). The source includes original branded concept art, authenticated operations UI, schema, tests, and a public portfolio landing page. **No investor list, private Drive document URLs, original IR files, passwords, or live credentials are included.** Private metadata and the investor pipeline remain in a separately protected database.
 
 ## Verified release status — 2026-11-07
 
@@ -10,7 +10,7 @@ Public-safe Next.js application source (v0.2.3). The source includes original br
 - 50 tracked source and brand image files; ten branded project WebP covers.
 - Neon PostgreSQL currently contains 10 projects and 11 source-document records; none is approved for public visibility.
 
-**Release gates:** Vercel automatic Git integration still needs installation access to `skvive/lexidinvest`. The production `DATABASE_URL` and `NEON_AUTH_COOKIE_SECRET` are not configured (cross-app credential forwarding was denied by the security gate). Real Google OAuth and database E2E checks remain pending. The public custom domain `ir.lexid.site` has not been attached; the unrelated `invest.lexid.site` has not been modified.
+**Release gates:** Production `DATABASE_URL` now uses a scoped Neon read/write role and the `NEON_AUTH_COOKIE_SECRET` is encrypted in Vercel. Protected OAuth login remains untested end-to-end with a real admin account; `ir.lexid.site` is not yet attached. Deployments from GitHub source have succeeded, but automatic GitHub integration may still need app access. The unrelated `invest.lexid.site` is untouched.
 
 ## Run
 
@@ -52,3 +52,11 @@ The admin sign-in page intentionally provides **Google login only**; Neon Auth d
 - Date-only accelerator deadlines use the end of the local date (23:59:59.999 Asia/Seoul), eliminating premature "expired" labels.
 - The dashboard highlights only future deadlines; its calendar retains expired deadlines for recordkeeping.
 - Google-only login and admin email verification remain mandatory.
+
+## Validation and session safety v0.2.5 (2026-11-08)
+
+- Required names are trimmed and cannot be saved as whitespace only; investor emails are validated and normalized.
+- Impossible calendar dates are rejected before SQL execution.
+- Duplicate records (Postgres 23505) return 409, invalid foreign keys (23503) return 422; database diagnostics are not sent to clients.
+- Dashboard data is cleared immediately and redirected to Google sign-in if an API request returns 401.
+- Existing v0.2.4 health SQL probe and Asia/Seoul deadline logic remain unchanged.

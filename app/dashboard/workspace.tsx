@@ -50,13 +50,13 @@ export function Workspace({email}:{email:string}){
  const [form,setForm]=useState<Record<string,string>>({});
  const [toast,setToast]=useState('');
  const refresh=useCallback(async()=>{
-   setLoading(true);setError('');try{const res=await fetch('/api/data?all=1',{credentials:'same-origin',cache:'no-store'});const json=await res.json();if(!res.ok)throw Error(json.error||'데이터 로드 실패');setData(json as Dataset);}catch(e){setError(e instanceof Error?e.message:'요청 오류');}finally{setLoading(false)}
+   setLoading(true);setError('');try{const res=await fetch('/api/data?all=1',{credentials:'same-origin',cache:'no-store'});if(res.status===401){setData(EMPTY);window.location.assign('/auth/sign-in');return;}const json=await res.json();if(!res.ok)throw Error(json.error||'데이터 로드 실패');setData(json as Dataset);}catch(e){setError(e instanceof Error?e.message:'요청 오류');}finally{setLoading(false)}
  },[]);
  useEffect(()=>{refresh()},[refresh]);
  useEffect(()=>{if(toast){const timer=setTimeout(()=>setToast(''),3400);return ()=>clearTimeout(timer)}},[toast]);
  const filtered=(items:Row[],keys:string[])=>items.filter(x=>!search||keys.some(k=>String(x[k]??'').toLowerCase().includes(search.toLowerCase())));
  const store=async(resource:keyof Dataset,values:Record<string,unknown>,id?:string)=>{
-   setBusy(true);try{const res=await fetch(id?`/api/data/${id}`:'/api/data',{method:id?'PATCH':'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({resource,data:values})});const json=await res.json();if(!res.ok)throw Error(json.error||'저장 실패');await refresh();setToast('변경사항을 저장했습니다.');return true;}catch(e){setToast('오류: '+(e instanceof Error?e.message:'요청 실패'));return false;}finally{setBusy(false)}
+   setBusy(true);try{const res=await fetch(id?`/api/data/${id}`:'/api/data',{method:id?'PATCH':'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({resource,data:values})});if(res.status===401){setData(EMPTY);window.location.assign('/auth/sign-in');return false;}const json=await res.json();if(!res.ok)throw Error(json.error||'저장 실패');await refresh();setToast('변경사항을 저장했습니다.');return true;}catch(e){setToast('오류: '+(e instanceof Error?e.message:'요청 실패'));return false;}finally{setBusy(false)}
  };
  const closeDialog=()=>{setDialog(null);setForm({});};
  const showDialog=(type:'investor'|'application'|'project'|'document'|'program')=>{
