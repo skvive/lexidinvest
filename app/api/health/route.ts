@@ -13,7 +13,7 @@ export function GET() {
   );
   return NextResponse.json({
     app: 'lexid-investor-hub',
-    version: '0.2.1',
+    version: '0.2.2',
     status: configured ? 'configured' : 'not_configured',
     // Configured does NOT mean a successful DB connection or completed OAuth E2E.
     readiness: 'requires_authenticated_smoke_test'

@@ -11,6 +11,6 @@ export async function getAdmin() {
   const user = 'user' in payload ? payload.user : null;
   const email = user?.email?.toLowerCase();
   const allowed = (process.env.ADMIN_EMAILS || '').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
-  if (!email || !allowed.includes(email)) return null;
+  if (user?.emailVerified !== true || !email || !allowed.includes(email)) return null;
   return { id: user!.id, email };
 }
