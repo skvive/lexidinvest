@@ -15,7 +15,7 @@ export async function GET() {
   );
   if (!configured) {
     return NextResponse.json({
-      app: 'lexid-investor-hub', version: '0.2.5',
+      app: 'lexid-investor-hub', version: '0.2.6',
       status: 'not_configured', database: 'not_checked',
       readiness: 'not_ready'
     }, { status: 503, headers });
