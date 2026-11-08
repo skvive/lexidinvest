@@ -60,3 +60,7 @@ The admin sign-in page intentionally provides **Google login only**; Neon Auth d
 - Duplicate records (Postgres 23505) return 409, invalid foreign keys (23503) return 422; database diagnostics are not sent to clients.
 - Dashboard data is cleared immediately and redirected to Google sign-in if an API request returns 401.
 - Existing v0.2.4 health SQL probe and Asia/Seoul deadline logic remain unchanged.
+
+## KAYSTYLE IR Templates v0.2.6 (2026-11-09)
+
+The first KAYSTYLE × K-MOUSE / STEVEN.KAY fundraising project is stored only in protected Neon project data. Administrators can browse the editable templates via the `IR 템플릿` section, which reads documents where `version_label` starts with `TEMPLATE`. No Google Drive file IDs, internal URLs, investor lists or confidential financial data are hardcoded into this public GitHub repository. The 2027–2029 funding proposal of KRW 1 billion per year is conditional and not funded. Google login and separate IP/legal/financial verification remain necessary before external investor submission.
