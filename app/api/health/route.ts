@@ -24,14 +24,14 @@ export async function GET() {
     const result = await sql()`SELECT 1 AS ok`;
     if (Number(result[0]?.ok) !== 1) throw new Error('Database probe failed');
     return NextResponse.json({
-      app: 'lexid-investor-hub', version: '0.2.5',
+      app: 'lexid-investor-hub', version: '0.2.6',
       status: 'configured', database: 'reachable',
       readiness: 'requires_authenticated_smoke_test'
     }, { status: 200, headers });
   } catch (error) {
     console.error('HEALTH_DB_PROBE_FAILED', error instanceof Error ? error.name : 'unknown');
     return NextResponse.json({
-      app: 'lexid-investor-hub', version: '0.2.5',
+      app: 'lexid-investor-hub', version: '0.2.6',
       status: 'db_unavailable', database: 'unreachable',
       readiness: 'not_ready'
     }, { status: 503, headers });
